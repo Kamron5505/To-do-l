@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-6">
+
+    <div class="max-w-xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-6">📝 To Do List</h1>
+
+        <div class="flex gap-2 mb-4">
+            <input id="text" type="text" placeholder="Введите задачу..."
+                class="flex-1 border rounded-md px-4 py-2 outline-none focus:ring-2 ring-blue-400">
+            <button onclick="addData()"
+                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Добавить</button>
+        </div>
+
+        <div id="task"></div>
+    </div>
+
+    <script>
+        let text = document.querySelector('#text');
+        let task = document.querySelector('#task');
+        let data = JSON.parse(localStorage.getItem('task1')) || [];
+
+        function renderData() {
+            task.innerHTML = "";
+            data.forEach((item, index) => {
+                let taskBlock = document.createElement('div');
+                taskBlock.classList.add(
+                    'bg-white', 'rounded-md', 'p-4', 'flex', 'justify-between', 'items-center', 'mb-2', 'shadow'
+                );
+
+                taskBlock.innerHTML = `
+          <p class="text-lg">${item}</p>
+          <div class="flex gap-2">
+            <button onclick="editData(${index})" class="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500">Edit</button>
+            <button onclick="deleteData(${index})" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600">Delete</button>
+          </div>
+        `;
+                task.append(taskBlock);
+            });
+        }
+
+        function addData() {
+            let input = text.value.trim();
+            if (input !== "") {
+                data.push(input);
+                text.value = "";
+                localStorage.setItem('task1', JSON.stringify(data));
+                renderData();
+            }
+        }
+
+        function deleteData(index) {
+            data.splice(index, 1);
+            localStorage.setItem('task1', JSON.stringify(data));
+            renderData();
+        }
+
+        function editData(index) {
+            let newText = prompt("Измените задачу:", data[index]);
+            if (newText !== null && newText.trim() !== "") {
+                data[index] = newText.trim();
+                localStorage.setItem('task1', JSON.stringify(data));
+                renderData();
+            }
+        }
+
+        renderData();
+    </script>
+</body>
+
+</html>
